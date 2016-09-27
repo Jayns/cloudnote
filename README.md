@@ -1,6 +1,5 @@
-# 此项目为学习JAVA时的模拟项目
 # 项目名称：
-  云笔记（cloudnote）
+  云笔记（cloudnote）— 此项目为学习JAVA时的模拟项目
 # 开发环境：
   Eclipse + Tomcat7.0 + MySQL + Maven + Win10
 # 软件架构：
