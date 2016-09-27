@@ -1,0 +1,149 @@
+try{
+//关闭自动提交con.setAutoCommit();
+执行SQL1
+执行SQL2
+//提交事务
+}catch(){
+//回滚事务
+}
+
+try{
+//关闭自动提交con.setAutoCommit();
+//原有业务组件逻辑
+//提交事务
+}catch(){
+//回滚事务
+}
+
+Spring提供了通过配置实现事务控制
+（Spring声明式事务管理）
+
+==========================
+#为项目追加服务器端异常处理（AOP）
+##什么是AOP，及其优点
+Aspect Oriented Programming面向切面编程
+Object Oriented Programming面向对象编程
+AOP是以OOP为基础
+AOP思想：用于处理共通业务时,将共通业务和传统
+的业务隔离开，单独封装成对象，之后通过配置方式
+将共通组件和传统业务组件关联在一起。
+
+AOP优点：灵活，降低共通和传统业务的耦合度，
+          可以在不修改原有业务组件代码情况下,追加
+          新的功能处理。
+IOC(解决两个普通组件关联,降低耦合度)
+
+程序员组件（包含打卡和工作两个逻辑）
+程序员组件（工作）+共通组件(打卡)+AOP配置
+
+Service(原有业务)+DataSourceTransactionManager
++@Transactional配置
+
+##AOP示例1
+功能描述：为每个请求进入Controller.execute时
+添加打桩信息。
+传统方式：
+Controller.execute(追加打桩代码+原有逻辑)
+AOP方式：
+Controller.execute不修改+编写打桩逻辑组件
++AOP配置
+
+##AOP相关概念
+###切面（Aspect）-->切入啥功能？
+ 是指封装一个共通处理逻辑,在另外一批组件方法中
+相同时刻进行调用。
+*切面组件就是指共通处理组件,具备向其他组件切入功能
+###切入点（Pointcut）-->切谁？给谁追加功能？
+ 指定目标组件及其方法。Spring提供了多种表达式,
+####方法限定表达式(匹配组件部分方法)
+execution(修饰符? 返回类型 方法名(参数) 抛出异常?)
+//匹配load打头的方法
+execution(* load*(..))
+//匹配UserService组件的load打头的方法
+execution(* org.service.UserService.load*(..))
+//匹配org.service包下所有类的所有方法
+execution(* org.service.*.*(..))
+//匹配org.service包及子包所有类的所有方法
+execution(* org.service..*.*(..))
+
+####类型限定表达式(匹配组件所有方法)
+within(组件类型)
+//匹配UserService组件所有方法
+within(org.service.UserService)
+//匹配org.service包下所有组件所有方法
+within(org.service.*)
+//匹配org.service包及子包所有组件所有方法
+within(org.service..*)
+####名称限定
+bean(组件的id名)
+//匹配id=userService组件的所有方法
+bean(userService)
+//匹配id名已Service结尾的所有组件的所有方法
+bean(*Service)
+
+###通知(Advice)-->什么时候切入？
+  指定切入的时机，例如方法前切入,方法后切入等。
+ 在Spring中提供了5种基本通知类型.
+ -前置通知：在目标方法前切入追加功能
+   <aop:before>  @Before
+ -后置通知：在目标方法后切入追加功能
+   <aop:after-returning> @AfterReturning
+ -异常通知：在目标方法抛出异常后切入追加功能
+   <aop:after-throwing> @AfterThrowing
+ -最终通知：在目标方法后切入追加功能
+  <aop:after> @After
+ -环绕通知：在目标方法前和后切入追加功能
+  <aop:around>  @Around
+
+try{
+//使用前置通知配置--》切入追加处理
+//执行目标组件方法
+//使用后置通知配置--》切入追加处理
+}catch(){
+//使用异常通知配置--》切入追加处理
+}finally{
+//使用最终通知配置--》切入追加处理
+}
+
+###动态代理(AutoProxy)
+原理：Spring采用动态代理技术实现了AOP编程。
+过程：当使用SpringAOP之后，Spring容器返回的对象,
+是利用动态代理技术生成一个新类型,该类型将原有组件方法
+进行了重写,在重写方法中调用原有组件业务+切面业务方法。
+
+Spring 框架在实现AOP时，采用了两种动态代理技术的实现方法。
+-使用JDK java.reflect.Proxy API生成新类型（实现原接口）
+  目标组件有接口，默认采用此方法
+  public class 新类型 implements 目标接口{}
+-使用CGLIB技术生成新类型（生成子类）
+  目标组件没有接口，默认采用此方法
+  public class 新类型 extends 目标{}
+
+##为项目追加服务器端异常处理
+服务器端要求：当请求处理发生异常后，将异常信息记录到
+                      文件保存。
+###AOP分析
+-切面（追加什么功能？）
+  将异常信息写入文件保存
+-切入点（给谁追加功能？） 
+  为所有ajax请求的服务器端处理
+  请求-->Controller-->Service-->Dao
+  决定：为所有Service切入，
+   within(org.tedu.cloudnote.service..*)
+-通知（什么位置/时机切入?）
+ Service方法抛出异常后切入功能
+ 决定：选用异常通知配置 @AfterThrowing
+
+#追加项目回收站列表显示功能
+
+====================
+任务一：完成AOP方式进行异常日志处理
+              完成Spring声明式事务管理（对AOP封装）
+任务二：完成回收站模块（列表显示,彻底删除,恢复）
+
+
+
+
+
+
+

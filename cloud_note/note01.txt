@@ -1,0 +1,108 @@
+##项目功能简介
+笔记系统,用于存储和管理个人笔记信息.
+系统主要功能有：用户模块、笔记本模块、笔记模块、
+  回收站、分享和收藏管理、活动模块。
+##系统采用的技术
+ jQuery:用于前段的js和Ajax处理
+ SpringMVC:用于接收请求分发处理,返回JSON响应
+ SpringIOC:用于管理Controller,Service,Dao组件,注入关系.
+                    降低组件之间的关联
+ SpringAOP:用于将共同业务和传统业务解耦,例如事务,
+                   异常日志功能采用AOP处理
+ MyBatis:用于实现对数据库的操作
+
+##搭建数据库环境
+E-R模型图（实体关系模型图，数据库）
+cloud_note.sql导入到MySQL数据库中
+-登录mysql数据库命令行环境
+-执行设置编码命令 set names utf8;
+-执行导入命令 source sql文件位置；
+Linux如果将sql文件放到soft01下
+source /home/soft01/cloud_note.sql
+
+默认用root账号
+库--》表--》记录
+show databases；//查看mysql有哪些库
+use 库名;//使用某个库,进入库后才能做表操作
+show tables;//查看某个库有哪些表
+desc 表名;//查看表结构
+基本select,insert,update,delete与Oracle相同
+
+##搭建项目工程
+###java代码
+ org.tedu.cloudnote.controller
+ org.tedu.cloudnote.controller.user
+ org.tedu.cloudnote.controller.book
+ org.tedu.cloudnote.controller.note
+ org.tedu.cloudnote.service
+ org.tedu.cloudnote.dao
+ org.tedu.cloudnote.entity
+ org.tedu.cloudnote.util
+
+###resources配置文件
+ conf/放Spring配置文件
+    spring-mvc.xml
+    spring-mybatis.xml
+    spring-transaction.xml
+    spring-aop.xml
+ mapper/放SQL定义文件
+    *Mapper.xml
+###jar包
+  springwebmvc
+  jackson
+  mybatis
+  mybatis-spring
+  spring-jdbc
+  dbcp
+  mysql驱动
+
+###html/css/js/images/styles
+放在webapp下
+
+###系统整体要求
+所有请求采用Ajax方式与服务器端交互
+所有请求响应的JSON统一格式为
+{
+ "status":请求处理状态,
+ "msg":消息,
+ "data":数据
+}
+
+##登录功能
+###发送Ajax请求
+ -发送时机：登录按钮onclick
+ -请求参数：用户名和密码
+ -请求地址：/user/login.do
+###服务器端处理
+ /user/login.do
+-->DispatcherServlet
+-->HanlderMapping
+-->UserLoginController.execute
+-->UserService.checkLogin
+-->UserDao-->cn_user（查询）
+-->返回NoteResult
+-->调用jackson包输出JSON结果
+
+###Ajax回调处理
+
+
+
+=====================
+任务一：重新构建cloud_note项目,
+              实现UserDao.findByName
+任务二：编写UserService组件，实现接口标准如下
+public interface UserService{
+     public NoteResult checkLogin(
+            String name,String password);
+}
+NoteResult返回结果：
+a.如果用户名错误,
+   返回status=1,msg="用户名错误",data=null
+b.如果密码错误,
+   返回status=2,msg="密码错误",data=null
+c.用户名密码正确
+   返回status=0,msg="登录成功",data=null
+
+
+
+

@@ -1,0 +1,58 @@
+#笔记分享
+cn_note,cn_share
+本质：用户将笔记分享，需要向cn_share表插入一条记录。
+##发送Ajax请求
+-点击笔记菜单"分享"按钮,onclick
+-请求参数：笔记ID
+-请求地址：/share/share.do
+##服务器端处理
+/share/share.do
+-->ShareNoteController.execute
+-->ShareService.shareNote
+-->ShareDao.save-->cn_share（插入）
+-->返回NoteResult结构的JSON结果
+status:0,msg:分享成功
+##Ajax回调处理
+-success函数:提示分享成功或该笔记已分享
+-error函数:提示分享失败
+
+#搜索分享笔记
+用户输入关键字后,按回车发送ajax请求,去cn_share表
+查询标题带有关键字的笔记，将查询结果返回给界面,
+界面解析返回的JSON,生成结果列表。
+##发送Ajax请求
+-输入关键字按回车(键盘事件keydown)
+-请求参数：关键字
+-请求地址：/share/search.do
+##服务器端处理
+/share/search.do
+-->SearchShareController.execute
+-->ShareService.searchShare
+-->ShareDao.findLikeTitle
+-->cn_share(按标题模糊查询)
+-->返回NoteResult结构的JSON结果
+cn_share_title like "%关键字%"
+
+##Ajax回调处理
+-success回调函数:解析返回的JSON结果,生成搜索结果列表
+      切换列表显示，显示搜索结果列表。
+      pc_part_2全部列表区
+      pc_part_4回收站列表区
+      pc_part_6搜索列表区
+      pc_part_7收藏笔记列表
+      pc_part_8参加活动的笔记列表
+
+===========================
+任务一：完成今天的笔记分享和分享笔记搜索功能
+任务二：独立实现回收站操作(选做)
+
+
+
+
+
+
+
+
+
+
+

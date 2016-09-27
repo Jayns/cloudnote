@@ -1,0 +1,42 @@
+#创建笔记本操作
+##发送Ajax请求
+-点击对话框中的"创建"按钮 onclick
+-请求参数：笔记本名称，用户ID
+-请求地址：/book/add.do
+##服务器端处理
+/book/add.do
+-->AddBookController.execute()
+-->BookService.addBook()
+-->BookDao.save()
+-->cn_notebook(插入)
+-->返回NoteResult结构的JSON结果
+ {"status":0,msg:"创建笔记本成功","data":"笔记本ID"}
+
+测试
+http://localhost:8080/cloud_note
+/book/add.do?userId=122&bookName=java
+
+##Ajax回调处理
+-success: a.关闭对话框;
+                b.追加笔记本li列表项;
+                c.提示创建笔记本成功
+-error:提示创建笔记本失败
+
+#创建笔记处理
+##发送Ajax请求
+-点击"创建笔记"对话框的"创建"按钮onclick
+-请求参数：笔记名称，笔记本ID，用户ID
+-请求地址：/note/add.do
+##服务器端处理
+/note/add.do
+-->AddNoteController.execute
+-->NoteService.addNote
+-->NoteDao.save-->cn_note(插入)
+-->返回NoteResult结构的JSON结果
+ data属性：笔记ID
+##Ajax回调处理
+success: a.关闭对话框;b.追加笔记li列表项;c.提示创建笔记成功
+
+
+
+

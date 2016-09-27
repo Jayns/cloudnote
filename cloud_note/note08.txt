@@ -1,0 +1,39 @@
+#分享笔记查看
+主要思路：根据点击的笔记,获取分享ID，然后发送Ajax请求
+去cn_share表获取分享笔记信息,最后将信息显示到预览区。
+##发送Ajax请求
+-搜索结果列表li单击 onclick
+-请求参数:分享ID
+-请求地址:/share/load.do
+##服务器端处理
+/share/load.do-->LoadShareController.execute
+-->ShareService.loadShare
+-->ShareDao.findById-->cn_share（查询）
+-->返回NoteResult结构的JSON结果
+##Ajax回调处理
+success函数:解析JSON结果;将信息显示到预览区;隐藏编辑区
+
+#收藏笔记
+主要思路：用户点击搜索结果列表中的"收藏"按钮,获取当前
+点击的分享笔记ID,然后发送Ajax请求将笔记信息写入cn_note
+表,最后界面给用户提示操作结果。
+##发送Ajax请求
+-点击分享笔记li中的"收藏"按钮,onclick
+-请求参数：分享ID,用户ID
+-请求地址：/share/favor.do
+##服务器端处理
+/share/favor.do-->FavorShareController.execute
+-->ShareService.favorShare
+-->NoteDao.save-->cn_note(插入,type_id='2')
+-->返回NoteResult结构的JSON结果
+##Ajax回调处理
+success回调函数：提示收藏成功还是失败。
+
+（追加逻辑：自己分享的笔记不允许收藏，给出提示信息）
+（追加逻辑：已收藏过的笔记不允许重复收藏，给出提示信息）
+ 追加一个收藏列表cn_favors
+ create table cn_favors(
+cn_user_id varchar(100),
+cn_share_id varchar(100));
+
+

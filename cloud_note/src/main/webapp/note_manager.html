@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>笔记管理</title>
+<script type="text/javascript" 
+		src="scripts/jquery.min.js">
+</script>
+<script type="text/javascript"
+		src="scripts/cookie_util.js">
+</script>
+<script type="text/javascript">
+$(function(){
+	var userId = getCookie("userId");
+	if(userId!=null){
+		//绑定搜索按钮单击处理
+		$("#search_btn").click(function(){
+			//获取请求参数
+			var title = $("#title").val().trim();
+			var status = $("#status").val();
+			//发送Ajax请求
+			$.ajax({
+				url:"http://localhost:8080/cloud_note/note/manager.do",
+				type:"post",
+				data:{"userId":userId,
+					"title":title,"status":status},
+				dataType:"json",
+				success:function(result){
+					if(result.status==0){
+						var notes = result.data;
+						//清除原有列表tr
+						$("#note_tb tr:gt(0)").remove();
+						//循环笔记集合,生成tr
+						for(var i=0;i<notes.length;i++){
+							var title = notes[i].cn_note_title;
+							var status = notes[i].cn_note_status_id;
+							var statusText = status=='2'?"删除":"正常";
+							var time = notes[i].createTime;
+							var str = "<tr><td>"+title
+								+"</td><td>"+statusText
+								+"</td><td>"+time
+								+"</td></tr>";
+							//添加到table元素
+							$("#note_tb").append(str);
+						}
+					}
+				},
+				error:function(){
+					alert("搜索失败");
+				}
+			});
+		});
+	}else{
+		window.location.href="log_in.html";
+	}
+});
+</script>
+</head>
+<body>
+<h2>笔记管理</h2>
+标题：<input type="text" id="title">
+状态：<select id="status">
+         <option value="0">全部/all</option>
+         <option value="2">删除/recycle</option>
+         <option value="1">正常/normal</option>
+      </select>
+<input type="button" id="search_btn" value="搜索">
+<hr/>
+<table id="note_tb">
+<tr><td>标题</td><td>状态</td>
+	<td>创建时间</td></tr>
+</table>
+</body>
+</html>

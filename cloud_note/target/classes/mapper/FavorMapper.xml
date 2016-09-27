@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="org.tedu.cloudnote.dao.FavorDao">
+
+<select id="findFavor" 
+parameterType="org.tedu.cloudnote.entity.Favor"
+resultType="int">
+select count(*) from cn_favors
+where cn_user_id=#{cn_user_id} 
+	and cn_share_id=#{cn_share_id}
+</select>
+
+<insert id="save" 
+parameterType="org.tedu.cloudnote.entity.Favor">
+insert into cn_favors
+	(cn_user_id,cn_share_id)
+values (#{cn_user_id},#{cn_share_id})
+</insert>
+
+</mapper>

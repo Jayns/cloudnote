@@ -1,0 +1,122 @@
+#MyBatis关联映射
+作用：应用于查询，用于多个关联表查询结果的封装。
+查询某个用户及其笔记本信息。
+cn_user
+cn_notebook
+使用MyBatis关联映射，可以将这两个表数据提取出来
+封装成对象结果返回。
+##单个对象关联映射<association>
+一个Book对应一个User,采用单个对象关联映射实现查
+Book带出相关的一个User信息。
+###一个SQL加载Book，再发送SQL加载关联的User
+-改造Book类,追加关联属性user
+-利用<resultMap>定义关联属性user的加载
+<association property="属性名" 
+   javaType="类型"
+  select="另一个sql" column="条件字段">
+</association> 
+###*利用一个SQL一起查出Book及关联的User信息
+-改造Book类,追加关联属性user
+-利用<resultMap>定义关联属性user的加载
+<association property="属性名" 
+   javaType="类型">
+   <!--定义哪些字段给哪些属性-->
+</association> 
+
+##集合对象关联映射<collection>
+一个User对应多个Book,采用集合关联映射实现查User
+带出相关的多个Book信息。
+###一个SQL加载User,再发送SQL加载关联的多个Book
+-改造User类，加一个List集合类型属性books
+-利用<resultMap>指定books加载
+<collection property="属性名"
+   javaType="属性类型"
+  ofType="集合泛型"
+  select="另一个SQL" column="条件字段">
+ </collection>
+###*利用一个SQL一起查出User及关联的多个Book
+-改造User类，加一个List集合类型属性books
+-利用<resultMap>指定books加载
+<collection property="属性名"
+   javaType="属性类型"
+  ofType="集合泛型">
+ <!--哪个字段给哪个属性赋值-->
+ </collection>
+
+##MyBatis主键映射
+数据表主键值有两种生成方法，一种是通过编程产生；
+另一个种利用数据库产生,例如自动递增或sequence等。
+
+执行一个添加操作，如果利用数据库产生
+create sequence emp_seq;
+insert into t_emp (no,name,sal)
+  values (emp_seq.nextval,"tom",2000);
+
+select emp_seq.nextval from dual;
+
+statement.executeUpdate();
+ResultSet rs = statement.getGeneratorKeys();
+
+
+create table t_emp(
+  no int primary key auto_increment,
+  name varchar(20),
+  sal double
+)
+
+###MySQL如何将自动生成主键值返回
+<insert id="save" 
+   useGeneratedKeys="true" keyProperty="no"
+parameterType="org.tedu.cloudnote.entity.Emp">
+
+###Oracle如何将序列生成主键值返回
+<insert>
+   <selectKey order="BEFORE" keyProperty="no" resultType="int">
+       select 序列.nextval from dual
+   </selectKey>
+   insert into ....
+</insert>
+
+#为项目追加回收站列表
+##发送Ajax请求
+-点击回收站按钮,onclick
+-请求参数：用户ID
+-请求地址：/note/loadrecycles.do
+##服务器端处理
+/note/loadrecycles.do
+-->LoadRecyclesController.execute
+-->NoteService.loadRecycles
+-->NoteDao.findByStatus-->cn_note(查询)
+-->返回NoteResult结构的JSON结果
+##Ajax回调处理
+success回调函数：生成回收站列表,显示回收站,
+  隐藏其他列表区
+
+#权限检查
+基于Session信息进行登录验证,大型系统有以下不足
+-占用了服务器资源
+-采用服务器集群部署,需要解决Session同步
+-单点登录,无法适用跨越系统集群的Session同步
+
+Cookie+Session实现令牌校验机制（中小型）
+
+该系统为了避免上述问题,采用了Cookie+DB
+实现令牌校验机制。(大型)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

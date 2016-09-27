@@ -1,0 +1,119 @@
+#MyBatis动态SQL
+MyBatis提供了一套标签，可以在SQL定义的XML文件
+中使用,用于实现if,for逻辑动态拼凑出SQL。
+这套标签与JSTL相似.
+<if test="">
+  sql子句
+</if>
+<choose>
+  <when test="">sql子句</when>
+  <when test="">sql子句</when>
+  <otherwise>sql子句</otherwise>
+</choose>
+<foreach>
+  循环逻辑
+</foreach>
+<where>
+<set>
+
+select * from emp 
+<where>
+   <choose>
+       <when test="sal!=null">
+        sal>#{sal} 
+      </when>
+       <otherwise>
+        sal>2600
+       </otherwise>
+   </choose>
+</where>
+
+
+1）标题：空 ；状态：全部
+-查询该用户所有笔记
+select * from cn_note where cn_user_id=#{userId}
+2）标题：xx ；状态：全部
+-按标题做模糊查询笔记
+select * from cn_note 
+where cn_user_id=#{userId}
+    and cn_note_title like #{title}
+3）标题：空 ；状态：删除或正常
+-按状态查询笔记
+select * from cn_note 
+where cn_user_id=#{userId}
+  and cn_note_status_id=#{status}
+4）标题：xx ；状态：删除或正常
+-按标题和状态查询笔记
+select * from cn_note 
+where cn_user_id=#{userId}
+  and cn_note_title like #{title}
+  and cn_note_status_id=#{status}
+
+##案例设计
+###发送Ajax请求
+###服务器端处理
+/note/manager.do
+-->NoteManagerController.execute
+-->NoteService.noteManager
+-->NoteDao-->cn_note(动态SQL查询)
+###Ajax回调处理
+
+<where>作用:
+  a.生成一个WHERE关键字
+  b.去除条件前面多余的and或or
+select * from cn_note 
+<where>
+ <if test="userId!=null">
+  cn_user_id=#{userId}
+ </if>
+ <if test="title!=null">
+ and cn_note_title like #{title}
+ </if>
+ <if test="status!=null">
+ and cn_note_status_id=#{status}
+ </if>
+</where>
+
+##案例2
+update cn_note
+set cn_notebook_id=#{bookId}
+where cn_note_id=#{noteId}
+
+update cn_note
+set cn_note_status_id=#{status}
+where cn_note_id=#{noteId}
+
+update cn_note
+set cn_note_title=#{cn_note_title},
+  cn_note_body=#{cn_note_body},
+  cn_note_last_modify_time=#{cn_note_last_modify_time}
+where cn_note_id=#{cn_note_id}
+
+<set>作用：
+  a.生成一个SET关键字
+  b.可以去除内容末尾处多余的,逗号
+
+##案例3
+
+delete from cn_note
+where cn_note_id in (?,?,?,?,?)
+
+String[] ids = {"1","3","6","7","8"};
+delete from cn_note
+where cn_note_id in ("1","3","6","7","8")
+
+<foreach open="(" close=")" 
+   collection="ids" item="id" separator=",">
+  #{id}
+</foreach>
+(
+for(String id:ids){
+  System.out.print(id+",");
+}
+)
+(1,3,6,7,8)
+
+
+
+
+
